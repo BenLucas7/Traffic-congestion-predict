@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from itertools import chain
 import json
+from sklearn.preprocessing import MinMaxScaler
 
 def read_file(name):
     if name[-6]=='f':
@@ -9,12 +10,8 @@ def read_file(name):
         df.index = pd.to_datetime(df.index)
 
         df.drop(['# Lane Points','% Observed'],axis=1,inplace=True)
-        # df.index.names = ['time']
         df.rename(columns = {'Lane 1 Speed (mph)':'speed', 'Lane 1 Flow (Veh/5 Minutes)':'flow'},inplace = True)
         df['time']=df.index
-        # df['speed'] = df['speed'].astype('float')
-        # print (df)
-        # print (df[df['speed']==0.0],df[df['flow']==0.0],'\n')
 
 
     elif name[-6]=='o':
@@ -22,14 +19,9 @@ def read_file(name):
         df.index = pd.to_datetime(df.index)
 
         df.drop(['# Lane Points','% Observed'],axis=1,inplace=True)
-        # df.index.names = ['time']
         df['time']=df.index
         df.rename(columns = {'Lane 1 Speed (mph)':'speed', 'Lane 1 Occ (%)':'occu'},inplace = True)
-        # df['speed'] = df['speed'].astype('float')
 
-        # print (df)
-
-        # print (df[df['speed']==0.0],df[df['occu']==0.0],'\n')
 
     return df
 
@@ -70,6 +62,13 @@ def gen_input():
 
     sample_num = int(np.floor(len(ups_speed)*3/900)*900)
 
+
+    # standerlized
+    scaler = MinMaxScaler()
+    ups_speed = scaler.fit_transform(np.array(ups_speed)[:,np.newaxis]).transpose().tolist()[0]
+    ups_flow = scaler.fit_transform(np.array(ups_flow)[:,np.newaxis]).transpose().tolist()[0]
+    ups_occu = scaler.fit_transform(np.array(ups_occu)[:,np.newaxis]).transpose().tolist()[0]
+
     ups = (np.array(list(\
             chain.from_iterable(zip(ups_speed,ups_flow,ups_occu))))).reshape((len(ups_speed),3))
 
@@ -78,14 +77,6 @@ def gen_input():
     downs_occu = downs['occu'].tolist()
     downs = (np.array(list(\
             chain.from_iterable(zip(downs_speed,downs_flow,downs_occu))))).reshape((len(downs_speed),3))
-
-    # for i in range(min(len(ups_speed),len(downs_speed))*3):
-    #     try:
-    #         temp = []
-    #
-    #
-    #     except IndexError:
-    #         break
 
     step=100 #切片不包括最后一个，[0,99][100,199]
     x = [ ups[i:i+step,:].tolist() for i in range(0,len(ups),step)][:-1]
@@ -97,8 +88,8 @@ def gen_input():
     with open('lstm_y.json','w') as f:
         json.dump(y,f)
 
-    print (np.array(x).shape)
-    print (np.array(y).shape)
+    # print (np.array(x).shape)
+    # print (np.array(y).shape)
 
 
 if __name__ == '__main__':
