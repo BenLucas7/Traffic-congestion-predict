@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 
 
 def load_data(type):
-    df = pd.read_excel('April.xlsx',index_col = 0)
+    df = pd.read_excel('data/April.xlsx',index_col = 0)
     df.index = pd.to_datetime(df.index)
 
     # print (df.head(28))
