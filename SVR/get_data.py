@@ -64,10 +64,14 @@ def gen_input():
 
 
     # standerlized
-    scaler = MinMaxScaler()
-    ups_speed = scaler.fit_transform(np.array(ups_speed)[:,np.newaxis]).transpose().tolist()[0]
-    ups_flow = scaler.fit_transform(np.array(ups_flow)[:,np.newaxis]).transpose().tolist()[0]
-    ups_occu = scaler.fit_transform(np.array(ups_occu)[:,np.newaxis]).transpose().tolist()[0]
+    scaler_speed = MinMaxScaler()
+    scaler_flow = MinMaxScaler()
+    scaler_occu = MinMaxScaler()
+    ups_speed = scaler_speed.fit_transform(np.array(ups_speed)[:,np.newaxis]).transpose().tolist()[0]
+    ups_flow = scaler_flow.fit_transform(np.array(ups_flow)[:,np.newaxis]).transpose().tolist()[0]
+    ups_occu = scaler_occu.fit_transform(np.array(ups_occu)[:,np.newaxis]).transpose().tolist()[0]
+
+    # scaler.inverse_transform(np.array(ups_occu)[:,np.newaxis])[:10]
 
     ups = (np.array(list(\
             chain.from_iterable(zip(ups_speed,ups_flow,ups_occu))))).reshape((len(ups_speed),3))
@@ -75,6 +79,12 @@ def gen_input():
     downs_speed = downs['speed'].tolist()
     downs_flow = downs['flow'].tolist()
     downs_occu = downs['occu'].tolist()
+
+    downs_speed = scaler_speed.fit_transform(np.array(downs_speed)[:,np.newaxis]).transpose().tolist()[0]
+    downs_flow = scaler_flow.fit_transform(np.array(downs_flow)[:,np.newaxis]).transpose().tolist()[0]
+    downs_occu = scaler_occu.fit_transform(np.array(downs_occu)[:,np.newaxis]).transpose().tolist()[0]
+
+
     downs = (np.array(list(\
             chain.from_iterable(zip(downs_speed,downs_flow,downs_occu))))).reshape((len(downs_speed),3))
 
@@ -82,18 +92,20 @@ def gen_input():
     x = [ ups[i:i+step,:].tolist() for i in range(0,len(ups),step)][:-1]
     y = [ downs[i,:].tolist() for i in range(step-1,len(downs),step)]
 
-    with open('lstm_x.json','w') as f:
-        json.dump(x,f)
+    # with open('lstm_x.json','w') as f:
+    #     json.dump(x,f)
+    #
+    # with open('lstm_y.json','w') as f:
+    #     json.dump(y,f)
 
-    with open('lstm_y.json','w') as f:
-        json.dump(y,f)
+    print (np.array(x).shape)
+    print (np.array(y).shape)
 
-    # print (np.array(x).shape)
-    # print (np.array(y).shape)
+    return np.array(x),np.array(y),scaler_speed, scaler_flow , scaler_occu
 
 
 if __name__ == '__main__':
-    gen_input()
+    _,_,_,_,_ = gen_input()
 
     #input 60,100,3
     #output 60,3
