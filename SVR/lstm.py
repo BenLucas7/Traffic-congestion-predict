@@ -15,11 +15,6 @@ from keras.layers import Activation, Dense
 from keras.layers import LSTM
 from keras.layers import Dropout
 
-# with open('lstm_x.json','r') as f:
-#     x = np.array(json.load(f))
-#
-# with open('lstm_y.json','r') as f:
-#     y = np.array(json.load(f))
 
 x,y,scaler_speed, scaler_flow , scaler_occu = gen_input()
 
@@ -66,11 +61,3 @@ fig = plt.figure()
 plt.plot(x,y_true,'r')
 plt.plot(x,res,'b')
 plt.show()
-# model = Sequential()
-# model.add(LSTM(1,input_shape=(100,3),return_sequences = True))
-# model.add(Dense(8, input_dim=3, activation= 'linear' ))
-# model.compile(loss='mse',optimizer='rmsprop',metrics=['accuracy'])
-# model.summary()
-# model.fit(x_train,y_train,epochs=100 ,batch_size=5,validation_split=0.05,verbose=0);
-# scores2 = model2.evaluate(y_train,y_test,verbose=1,batch_size=5)
-# print('Accurracy: {}'.format(scores2[1]))
