@@ -53,7 +53,7 @@ class PSO_SVR:
         data_config             = config["Data"]
 
         # 读取数据
-        self.X, self.Y = load_data(type)
+        self.X, self.Y,_ = load_data('data/April.xlsx',type)
 
         # 初始化所有粒子（SVRs）
         self.init_particles()
@@ -255,7 +255,7 @@ def train_svr(config_file, svr_params,type):
     config = configparser.ConfigParser()
     config.read(config_file)
     data_config = config["Data"]
-    X, Y = load_data(type)
+    X, Y, _ = load_data('data/April.xlsx',type)
 
     # 新建 pipeline（集合fit transform train）.
     # x_scaler为标准正态分布应用器
