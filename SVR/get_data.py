@@ -99,8 +99,6 @@ def gen_input():
     # with open('lstm_y.json','w') as f:
     #     json.dump(y,f)
 
-    print (np.array(x).shape)
-    print (np.array(y).shape)
 
     return np.array(x),np.array(y),scaler_speed, scaler_flow , scaler_occu
 
