@@ -29,8 +29,9 @@ def read_file(name):
 def gen_input():
     files = []
     file_dict = {}
+    num = 4
 
-    for i in range(1,4):
+    for i in range(1,num+1):
         for j in ['up','down']:
             for k in ['sf','so']:
                 name = 'week'+str(i)+'_'+j+'_'+k+'.xlsx'
@@ -50,8 +51,8 @@ def gen_input():
             break
 
 
-    up = [file_dict['week1_up'],file_dict['week2_up'],file_dict['week3_up']]
-    down = [file_dict['week1_do'],file_dict['week2_do'],file_dict['week3_do']]
+    up = [file_dict['week'+str(i)+'_up'] for i in range(1,num+1)]
+    down = [file_dict['week'+str(i)+'_do'] for i in range(1,num+1)]
 
     ups = pd.concat(up)
     downs = pd.concat(down)
