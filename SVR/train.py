@@ -9,7 +9,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVR
-from utils import load_data
+from utils import get_SVR_input
 import time
 c_pair_plot=[]
 gamma_pair_plot=[]
@@ -53,8 +53,7 @@ class PSO_SVR:
         data_config             = config["Data"]
 
         # 读取数据
-        self.X, self.Y,_ = load_data('data/April.xlsx',type)
-
+        self.X, self.Y,_,_ = get_SVR_input('train_up',type)
         # 初始化所有粒子（SVRs）
         self.init_particles()
         print("Number of SVRs :", self.n_svrs)
@@ -126,14 +125,14 @@ class PSO_SVR:
             x_train = self.X[np.r_[0:idx_min, idx_max:n_samples]]
             y_train = self.Y[np.r_[0:idx_min, idx_max:n_samples]]
 
-        # 数据标准化
-        # 将 x_train 标准化为正态分布
-        x_scaler = StandardScaler()
-        # x_scaler = MinMaxScaler()
-        # 将数据按期属性（按列进行）减去其均值，并处以其方差。对于每个属性 /每列来说所有数据都聚集在0附近，方差为1。
-        x_train = x_scaler.fit_transform(x_train)
-        # 根据已知的 mu 与 sigma 参数标准化 x_test
-        x_test = x_scaler.transform(x_test)
+        # # 数据标准化
+        # # 将 x_train 标准化为正态分布
+        # x_scaler = StandardScaler()
+        # # x_scaler = MinMaxScaler()
+        # # 将数据按期属性（按列进行）减去其均值，并处以其方差。对于每个属性 /每列来说所有数据都聚集在0附近，方差为1。
+        # x_train = x_scaler.fit_transform(x_train)
+        # # 根据已知的 mu 与 sigma 参数标准化 x_test
+        # x_test = x_scaler.transform(x_test)
         return x_train, x_test, y_train, y_test
 
     def run_optimizer(self):
@@ -214,17 +213,17 @@ class PSO_SVR:
             r2 = np.random.random()
 
             # 更新 C 的值
-            C = params["C"]
-            C_new = self.inertia_wt * C \
-                    + r1*self.c1*(self.p_best_params[i]["C"] - C) \
-                    + r2*self.c2*(self.g_best_params["C"] - C)
+            C = params['C']
+            C_new = (self.inertia_wt * C \
+                    + r1*self.c1*(self.p_best_params[i]['C'] - C) \
+                    + r2*self.c2*(self.g_best_params['C'] - C))
             C_new = max(0.01, C_new)
 
             # Find new gamma value.
             gamma = params["gamma"]
-            gamma_new = self.inertia_wt * gamma \
+            gamma_new = (self.inertia_wt * gamma \
                     + r1*self.c1*(self.p_best_params[i]["gamma"] - gamma) \
-                    + r2*self.c2*(self.g_best_params["gamma"] - gamma)
+                    + r2*self.c2*(self.g_best_params["gamma"] - gamma))
             gamma_new= max(0.001, gamma_new)
             ctemp.append(C_new)
             gammatemp.append(gamma_new)
@@ -255,28 +254,34 @@ def train_svr(config_file, svr_params,type):
     config = configparser.ConfigParser()
     config.read(config_file)
     data_config = config["Data"]
-    X, Y, _ = load_data('data/April.xlsx',type)
+    X, Y, _, scaler = get_SVR_input('train_up',type)
 
-    # 新建 pipeline（集合fit transform train）.
-    # x_scaler为标准正态分布应用器
-    x_scaler = StandardScaler()
-    # x_scaler = MinMaxScaler()
+    # # 新建 pipeline（集合fit transform train）.
+    # # x_scaler为标准正态分布应用器
+    # x_scaler = StandardScaler()
+    # # x_scaler = MinMaxScaler()
     # 设定好参数的 svr
     svr = SVR(**svr_params)
 
-    pipeline = Pipeline(steps = [('preprocess', x_scaler), ('SVR', svr)])
+    pipeline = Pipeline(steps = [('SVR', svr)])
     pipeline.fit(X,Y)
 
     # Save the pipeline.
     if type=='speed':
-        save_path = config["Model"]["save_path_s"]
+        save_path = config["Model"]["svr_s_save_path"]
+        scaler_path = config["Model"]["scaler_s_save_path"]
         with open(save_path, 'wb') as save_file:
             pickle.dump(pipeline, save_file)
+        with open(scaler_path,'wb') as scaler_file:
+            pickle.dump(scaler,scaler_file)
 
     if type=='flow':
-        save_path = config["Model"]["save_path_f"]
+        save_path = config["Model"]["svr_f_save_path"]
+        scaler_path = config["Model"]["scaler_f_save_path"]
         with open(save_path, 'wb') as save_file:
             pickle.dump(pipeline, save_file)
+        with open(scaler_path,'wb') as scaler_file:
+            pickle.dump(scaler,scaler_file)
 
 #-----------------------------------------------------------------------------#
 
@@ -308,9 +313,9 @@ if __name__ == "__main__":
     print("\nTraining final model")
     train_svr(config_file, best_params,type=train_type)
 
-    with open('c_' + train_type + '.json','w') as f:
+    with open('json/c_' + train_type + '.json','w') as f:
         json.dump(c_pair_plot,f)
-    with open('gamma_'+ train_type + '.json','w') as f:
+    with open('json/gamma_'+ train_type + '.json','w') as f:
         json.dump(gamma_pair_plot,f)
 
 

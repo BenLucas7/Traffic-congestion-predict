@@ -103,8 +103,10 @@ def gen_input():
     return np.array(x),np.array(y),scaler_speed, scaler_flow , scaler_occu
 
 
+
+
 if __name__ == '__main__':
-    _,_,_,_,_ = gen_input()
+    # _,_,_,_,_ = gen_input()
 
     #input 60,100,3
     #output 60,3
