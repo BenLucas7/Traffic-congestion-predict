@@ -24,23 +24,24 @@ def get_train_and_test(up_fname,down_fname,type_list):
         return None
 
     x, y, scalers = get_LSTM_input(up_fname,down_fname)
-    x_train = x[:-10]
-    x_test = x[-10:]
+    last_num = 20
+    x_train = x[:-last_num]
+    x_test = x[-last_num:]
 
     if len(type_list)>1:
-        y_train = y[:-10][:,:len(type_list)]
-        y_test = y[-10:][:,:len(type_list)]
+        y_train = y[:-last_num][:,:len(type_list)]
+        y_test = y[-last_num:][:,:len(type_list)]
 
     if len(type_list)==1:
         if type_list[0] == 'speed':
-            y_train = y[:-10][:,0]
-            y_test = y[-10:][:,0]
+            y_train = y[:-last_num][:,0]
+            y_test = y[-last_num:][:,0]
         if type_list[0] == 'flow':
-            y_train = y[:-10][:,1]
-            y_test = y[-10:][:,1]
+            y_train = y[:-last_num][:,1]
+            y_test = y[-last_num:][:,1]
         if type_list[0] == 'occu':
-            y_train = y[:-10][:,2]
-            y_test = y[-10:][:,2]
+            y_train = y[:-last_num][:,2]
+            y_test = y[-last_num:][:,2]
 
     print (x_train.shape)
     print (x_test.shape)
@@ -52,9 +53,10 @@ def get_train_and_test(up_fname,down_fname,type_list):
 def train_lstm(x_train,y_train,type_list):
     model = Sequential()
     # model.add(LSTM(units = 64, input_shape = (100,3), return_sequences = True))
-    model.add(LSTM(units =128, input_shape = (100,2), return_sequences = True))
-    model.add(LSTM(128, return_sequences=False)) # SET HERE
-    model.add(Dropout(0.2))
+    model.add(LSTM(units=32, input_shape = (100,2), return_sequences = True))
+    if (type_list[0]=='speed'):
+        model.add(LSTM(units=32, input_shape = (100,2), return_sequences = True))
+    model.add(LSTM(32, return_sequences=False)) # SET HERE
 
     if len(type_list) > 3:
         print ('too much parameters were given to train LSTM')
