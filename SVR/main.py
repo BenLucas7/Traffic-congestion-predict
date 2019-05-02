@@ -6,6 +6,9 @@ import json
 import pickle
 import datetime
 from sklearn.metrics import mean_absolute_error,r2_score,mean_squared_error
+from matplotlib.text import OffsetFrom
+from matplotlib.offsetbox import AnchoredText
+import matplotlib.patches as patches
 
 def MAPE(true,pred):
     diff = np.abs(np.array(true) - np.array(pred))
@@ -99,18 +102,6 @@ def predict_using_svr_LSTM():
         except KeyError:
             break
 
-    print ('SPEED:')
-    print ('\tmae: ',mean_absolute_error(y_true_speed,y_pred_speed))
-    print ('\tr2 score: ',r2_score(y_true_speed,y_pred_speed))
-    print ('\tmse: ',mean_squared_error(y_true_speed,y_pred_speed))
-    print ('\tmape: ',MAPE(y_true_speed,y_pred_speed))
-    print ('-'*40)
-    print ('FLOW:')
-    print ('\tmae: ',mean_absolute_error(y_true_flow,y_pred_flow))
-    print ('\tr2 score: ',r2_score(y_true_flow,y_pred_flow))
-    print ('\tmse: ',mean_squared_error(y_true_flow,y_pred_flow))
-    print ('\tmape: ',MAPE(y_true_flow,y_pred_flow))
-    print ('-'*40)
 
     fig = plt.figure(figsize=(15,9.375))
     ax1 = plt.subplot(211)
@@ -120,6 +111,23 @@ def predict_using_svr_LSTM():
     ax1.set_title('Off-site traffic speed prediction')
     ax1.legend(loc='best',framealpha=0.5)
 
+    speed_annotation = '{}{:.4f}\n{}{:.4f}\n{}{:.4f}\n{}{:.4f}'.format(
+            'mae: ',
+            mean_absolute_error(y_true_speed,y_pred_speed),
+            'r2 score: ',
+            r2_score(y_true_speed,y_pred_speed),
+            'mse: ',
+            mean_squared_error(y_true_speed,y_pred_speed),
+            'mape: ',
+            MAPE(y_true_speed,y_pred_speed)
+    )
+    at = AnchoredText(speed_annotation,
+                      prop=dict(size=10), frameon=True,
+                      loc='lower left',
+                      )
+    at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
+    ax1.add_artist(at)
+
 
     ax2 = plt.subplot(212)
     ax2.plot(x_time,y_pred_flow,linestyle = '-',color = '#F4B400',label = 'predict')
@@ -128,6 +136,28 @@ def predict_using_svr_LSTM():
     ax2.legend(loc='best',framealpha=0.5)
     ax2.set_title('Off-site traffic flow prediction')
 
+    flow_annotation = '{}{:.4f}\n{}{:.4f}\n{}{:.4f}\n{}{:.4f}'.format(
+            'mae: ',
+            mean_absolute_error(y_true_flow,y_pred_flow),
+            'r2 score: ',
+            r2_score(y_true_flow,y_pred_flow),
+            'mse: ',
+            mean_squared_error(y_true_flow,y_pred_flow),
+            'mape: ',
+            MAPE(y_true_flow,y_pred_flow)
+    )
+
+    print (flow_annotation)
+
+    at = AnchoredText(flow_annotation,
+                      prop=dict(size=10), frameon=True,
+                      loc='lower left',
+                      )
+    at.patch.set_boxstyle("round,pad=0.,rounding_size=0.1")
+    ax2.add_artist(at)
+
+
+    plt.savefig('pic/Final.png', dpi=300)
     plt.show()
 
 
