@@ -55,17 +55,17 @@ def getPlot(train_type):
 
     for i in range(num):
         print (i)
-        fig = plt.figure()
-        plt.subplot(111)
-        plt.scatter(c_pair_plot[i],gamma_pair_plot[i],s=3)
-        # plt.xlim(0,30)
-        # plt.ylim(0,0.1)
-        plt.xlabel('C')
-        plt.ylabel('gamma')
-        plt.title('PSO Optimization for c and gamma')
-        filename='step'+str(i)+'.png'
-        plt.savefig('plot_' + train_type + '/'+filename, dpi=300)
-        plt.gca()
+        # fig = plt.figure()
+        # plt.subplot(111)
+        # plt.scatter(c_pair_plot[i],gamma_pair_plot[i],s=3)
+        # # plt.xlim(0,30)
+        # # plt.ylim(0,0.1)
+        # plt.xlabel('C')
+        # plt.ylabel('gamma')
+        # plt.title('PSO Optimization for c and gamma')
+        # filename='step'+str(i)+'.png'
+        # plt.savefig('plot_' + train_type + '/'+filename, dpi=300)
+        # plt.gca()
 
         fig = plt.figure(figsize=(15,9.375))
         ax1 = plt.subplot(121)

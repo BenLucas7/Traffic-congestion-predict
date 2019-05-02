@@ -30,6 +30,7 @@ def read_excel(fname):
     return return_dict
 
 def get_SVR_input(fname,type='speed'):
+    # 没有归一化效果更好
 
     excel_vec = read_excel(fname)
 
@@ -83,7 +84,8 @@ def get_LSTM_input(up_fname,down_fname,test_mode=False):
     y_speed = []
     y_flow = []
     y_occu = []
-    input_map = {}
+    time_series_input = {}
+    time_series_output = {}
 
     # features = np.asarray(list(chain.from_iterable(zip(speed_up,flow_up,occu_up)))).reshape(-1,3)
     features = np.asarray(list(chain.from_iterable(zip(speed_up,flow_up)))).reshape(-1,2)
@@ -107,20 +109,21 @@ def get_LSTM_input(up_fname,down_fname,test_mode=False):
 
     for i in range(0,len(speed_up)):
         if i+time_steps < len(speed_up):
-            feat_vec = features[i:i+time_steps].tolist()
+            feat_vec = features[i:i+time_steps].tolist() # 上游的数据
             x.append(feat_vec)
-            y_speed.append(speed_down[i+time_steps-1])
+            y_speed.append(speed_down[i+time_steps-1]) # 下游的数据
             y_flow.append(flow_down[i+time_steps-1])
             y_occu.append(occu_down[i+time_steps-1])
             if test_mode:
-                input_map[date[i+time_steps-1]] = feat_vec
+                time_series_input[date[i+time_steps-1]] = feat_vec
+                time_series_output[date[i+time_steps-1]] = [y_speed[-1],y_flow[-1],y_occu[-1]]
         else:
             break
     x = np.asarray(x)
     y = np.asarray(list(chain.from_iterable(zip(y_speed,y_flow,y_occu)))).reshape(-1,3)
 
     if test_mode:
-        return input_map, y, scalers
+        return time_series_input, time_series_output, scalers
     else:
         return x, y, scalers
 

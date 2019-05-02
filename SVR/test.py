@@ -4,26 +4,17 @@ import numpy as np
 import sys
 import json
 import matplotlib.pyplot as plt
-from utils import load_data
+from utils import get_SVR_input
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_squared_error
 
 
-def test(config_file):
-    # Parse config file.
-    config = configparser.ConfigParser()
-    config.read(config_file)
+def test():
+    test_x, test_y,time, scalers = get_SVR_input('test_up','speed')
 
-    # Load the data.
-    with open('test_input.json','r') as inputFile:
-        test_x = np.asarray(json.load(inputFile))
-
-    with open('test_velocity.json','r') as velocity:
-        test_y = np.asarray(json.load(velocity))
 
     # Load the prediction pipeline.
-    model_config = config["Model"]
-    with open(model_config["save_path"], "rb") as model_file:
+    with open('pickle/svr_speed_model.pickle', "rb") as model_file:
         pipeline = pickle.load(model_file)
 
     # Calculate test score(coefficient of determination).
@@ -54,6 +45,4 @@ def test(config_file):
 
 
 if __name__ == "__main__":
-    config_file = sys.argv[1]
-
-    test(config_file)
+    test()
