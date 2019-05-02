@@ -132,7 +132,7 @@ def predict_using_svr_LSTM():
     ax2 = plt.subplot(212)
     ax2.plot(x_time,y_pred_flow,linestyle = '-',color = '#F4B400',label = 'predict')
     ax2.plot(x_time,y_true_flow,linestyle = '-',color = '#0F9D58',label = 'true')
-    ax1.set(ylabel='flow')
+    ax2.set(ylabel='flow')
     ax2.legend(loc='best',framealpha=0.5)
     ax2.set_title('Off-site traffic flow prediction')
 
