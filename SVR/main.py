@@ -5,6 +5,7 @@ import utils
 import json
 import pickle
 import datetime
+import entropy
 from sklearn.metrics import mean_absolute_error,r2_score,mean_squared_error
 from matplotlib.text import OffsetFrom
 from matplotlib.offsetbox import AnchoredText
@@ -49,6 +50,7 @@ def predict_using_svr_LSTM():
     x_time = [] # 画图时候的横轴
     y_true_speed = []
     y_true_flow = []
+
     for time,vec in time_series_input.items():
         # 获取svr输入向量 [s-10,s-5,s,f-10,f-5,f]
         tempVec = np.asarray(vec[-3:])
@@ -79,7 +81,6 @@ def predict_using_svr_LSTM():
         next_down_flow =\
             all_scaler['down_flow'].inverse_transform(next_down_flow_uniformed).tolist()[0][0]
 
-        # print (time,next_down_speed,next_down_flow)
 
         # 5分钟后
         next = time+delta
@@ -101,8 +102,9 @@ def predict_using_svr_LSTM():
 
         except KeyError:
             break
+    return x_time, y_pred_speed, y_pred_flow, y_true_speed, y_true_flow
 
-
+def draw_plot(x_time, y_pred_speed, y_pred_flow, y_true_speed, y_true_flow):
     fig = plt.figure(figsize=(15,9.375))
     ax1 = plt.subplot(211)
     ax1.plot(x_time,y_pred_speed,linestyle = '-',color = '#4285F4',label = 'predict')
@@ -156,10 +158,15 @@ def predict_using_svr_LSTM():
     at.patch.set_boxstyle("round,pad=0.,rounding_size=0.1")
     ax2.add_artist(at)
 
-
-    plt.savefig('pic/Final.png', dpi=300)
     plt.show()
+    # plt.savefig('pic/Final.png', dpi=300)
+
+
+    return x_time, y_pred_speed, y_pred_flow, y_true_speed, y_true_flow
 
 
 if __name__ == '__main__':
-    predict_using_svr_LSTM()
+    time,pred_speed,pred_flow,true_speed,true_flow = predict_using_svr_LSTM()
+
+    draw_plot(time,pred_speed,pred_flow,true_speed,true_flow)
+    # entropy_weight_method(time,pred_speed,pred_flow,true_speed,true_flow)
