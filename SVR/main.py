@@ -102,9 +102,24 @@ def predict_using_svr_LSTM():
 
         except KeyError:
             break
+
+
+    with open('y_pred_speed.json','w') as f:
+        json.dump(y_pred_speed,f)
+
+    with open('y_pred_flow.json','w') as f:
+        json.dump(y_pred_flow,f)
+
+    with open('y_true_speed.json','w') as f:
+        json.dump(y_true_speed,f)
+
+    with open('y_true_flow.json','w') as f:
+        json.dump(y_true_flow,f)
+
     return x_time, y_pred_speed, y_pred_flow, y_true_speed, y_true_flow
 
-def draw_plot(x_time, y_pred_speed, y_pred_flow, y_true_speed, y_true_flow):
+
+def draw_pred_curve(x_time, y_pred_speed, y_pred_flow, y_true_speed, y_true_flow):
     fig = plt.figure(figsize=(15,9.375))
     ax1 = plt.subplot(211)
     ax1.plot(x_time,y_pred_speed,linestyle = '-',color = '#4285F4',label = 'predict')
@@ -149,7 +164,6 @@ def draw_plot(x_time, y_pred_speed, y_pred_flow, y_true_speed, y_true_flow):
             MAPE(y_true_flow,y_pred_flow)
     )
 
-    print (flow_annotation)
 
     at = AnchoredText(flow_annotation,
                       prop=dict(size=10), frameon=True,
@@ -164,9 +178,50 @@ def draw_plot(x_time, y_pred_speed, y_pred_flow, y_true_speed, y_true_flow):
 
     return x_time, y_pred_speed, y_pred_flow, y_true_speed, y_true_flow
 
+def draw_rank(x_time,pred_rank,true_rank,accu):
+    fig = plt.figure(figsize=(15,9.375))
+    ax = plt.subplot(111)
+
+    ax.plot(x_time,pred_rank,color = '#4285F4',label='Predict Rank',marker='.')
+    ax.plot(x_time,true_rank,color = '#DB4437',label='True Rank',marker='o',fillstyle='none')
+
+    ax.set(xlabel='time')
+    ax.set(ylabel='rank')
+    ax.set_ylim([0,7])
+    ax.set_title('Traffic congestion rank')
+    ax.legend(loc='best',framealpha=0.5)
+
+    speed_annotation = 'accuracy: {:.4f}'.format(accu)
+
+    at = AnchoredText(speed_annotation,
+                      prop=dict(size=10), frameon=True,
+                      loc='upper left',
+    )
+    at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
+    ax.add_artist(at)
+
+    plt.savefig('pic/rank.png', dpi=300)
+    plt.show()
+
+
 
 if __name__ == '__main__':
-    time,pred_speed,pred_flow,true_speed,true_flow = predict_using_svr_LSTM()
+    # time,pred_speed,pred_flow,true_speed,true_flow = predict_using_svr_LSTM()
+    time,pred_speed,pred_flow,true_speed,true_flow = entropy.read_json()
+    print ('predicton finished')
+    # draw_pred_curve(time,pred_speed,pred_flow,true_speed,true_flow)
+    mor_weight,eve_weight,oth_weight = entropy.get_final_weight()
+    pred_matrix = entropy.matrix_with_rush_tag(time,pred_speed,pred_flow)
+    pred_rank = entropy.congestion_rank(pred_matrix,mor_weight,eve_weight,oth_weight)
 
-    draw_plot(time,pred_speed,pred_flow,true_speed,true_flow)
-    # entropy_weight_method(time,pred_speed,pred_flow,true_speed,true_flow)
+    true_matrix = entropy.matrix_with_rush_tag(time,true_speed,true_flow)
+    true_rank = entropy.congestion_rank(true_matrix,mor_weight,eve_weight,oth_weight)
+
+    cnt=0
+    for i in range(len(pred_rank)):
+        if pred_rank[i]!=true_rank[i]:
+            cnt+=1
+
+    accu = (len(pred_rank)-cnt)/len(pred_rank)
+    print ('accu',accu)
+    draw_rank(time,pred_rank,true_rank,accu)
