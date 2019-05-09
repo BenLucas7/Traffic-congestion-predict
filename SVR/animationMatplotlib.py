@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 from matplotlib import animation
 import json
 import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = ['Ping Hei']
+plt.rcParams['font.size'] = 14
+plt.rcParams['axes.unicode_minus'] = False
 from matplotlib.patches import Ellipse
 import pandas as pd
 from matplotlib.text import OffsetFrom
@@ -21,6 +24,9 @@ def getPlot(train_type):
         c_pair_plot = json.load(f)
     with open('gamma_'+ train_type + '.json','r') as f:
         gamma_pair_plot = json.load(f)
+
+    with open(train_type + '_best_params.json','r') as f:
+        best_params = json.load(f)
 
     num = len(gamma_pair_plot)
 
@@ -127,6 +133,43 @@ def getPlot(train_type):
         plt.gca()
 
 
+def get_speed_flow_together():
+
+    with open('json/c_speed.json','r') as f:
+        speed_c = json.load(f)
+    with open('json/gamma_speed.json','r') as f:
+        speed_g = json.load(f)
+    with open('json/speed_best_params.json','r') as f:
+        speed_best = json.load(f)
+
+    with open('json/c_flow.json','r') as f:
+        flow_c = json.load(f)
+    with open('json/gamma_flow.json','r') as f:
+        flow_g = json.load(f)
+    with open('json/flow_best_params.json','r') as f:
+        flow_best = json.load(f)
+
+    num = len(speed_c)
+
+    fig = plt.figure()
+    ax1 = plt.subplot(121)
+    ax1.scatter(speed_c[-1],speed_g[-1],s=4)
+    ax1.set(xlabel='speed_C', ylabel='speed_gamma')
+    ax1.set_title('粒子群优化速度预测模型时参数的变化')
+    ax1.annotate('global best', xy=(speed_best['C'], speed_best['gamma']), xytext=(speed_best['C']+speed_best['gamma'], speed_best['gamma']*1.005),
+        arrowprops=dict(arrowstyle="->"),
+    )
+
+    ax2 = plt.subplot(122)
+    ax2.scatter(flow_c[-1],flow_g[-1],s=4)
+    ax2.set(xlabel='flow_C', ylabel='flow_gamma')
+    ax2.set_title('粒子群优化流量预测模型时参数的变化')
+    ax2.annotate('global best', xy=(flow_best['C'], flow_best['gamma']), xytext=(flow_best['C']+flow_best['gamma']
+                                                                                    , flow_best['gamma']*1.005),
+        arrowprops=dict(arrowstyle="->"),
+    )
+
+    plt.show()
 
 if __name__ == '__main__':
-    getPlot('speed')
+    get_speed_flow_together()
