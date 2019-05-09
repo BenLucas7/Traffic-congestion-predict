@@ -107,8 +107,8 @@ def get_LSTM_input(up_fname,down_fname,test_mode=False):
 
 
 
-    for i in range(0,len(speed_up)):
-        if i+time_steps < len(speed_up):
+    for i in range(len(speed_up)):
+        if i+time_steps <= len(speed_up):
             feat_vec = features[i:i+time_steps].tolist() # 上游的数据
             x.append(feat_vec)
             y_speed.append(speed_down[i+time_steps-1]) # 下游的数据
@@ -131,5 +131,9 @@ def get_LSTM_input(up_fname,down_fname,test_mode=False):
 
 
 if __name__ == '__main__':
-    # get_LSTM_input('test_up','test_down',test_mode=True)
-    get_SVR_input('train_up')
+    # time_series_input, time_series_output, scalers = get_LSTM_input('test_up','test_down',test_mode=True)
+    # print (time_series_input)
+
+    x, y, scalers = get_LSTM_input('train_up','train_down')
+    print (x[0],y[0])
+    # get_SVR_input('train_up')
