@@ -57,52 +57,52 @@ def test():
     last=-1
 
     plt.rcParams['font.family'] = ['Ping Hei']
-    plt.rcParams['font.size'] = 14
+    plt.rcParams['font.size'] = 12
     plt.rcParams['axes.unicode_minus'] = False
 
     # font = FontProperties(fname='/Users/YogaLucas/Library/Fonts/SF-Pro-Text-Regular.otf',size=12)
 
-    # fig=plt.figure()#figsize=(15,9.375))
-    # ax1=fig.add_subplot(2,1,1)
-    # ax1.plot(x[:last],speed_y[:last],color='#4285F4',label="真实值",linestyle='-')
-    # ax1.plot(x[:last],predictVelocity[:last],color='#DB4437',label= "预测值",linestyle='--',marker='x')
-    # ax1.set_xlabel("时间/min")#,fontproperties=font)
-    # ax1.set_ylabel("速度")#,fontproperties=font)
-    # # ax.set_ylim(-1,1)
-    # ax1.set_title('PSO-SVR 预测结果')
-    # ax1.legend(loc="best",framealpha=0.5)
-    #
-    # error=speed_y[:last]-predictVelocity[:last]
-    # ax1=fig.add_subplot(2,1,2)
-    # ax1.bar(x[:last],speed_y[:last]-predictVelocity[:last])
-    # ax1.set_xlabel("时间/min")#,fontproperties=font)
-    # ax1.set_ylabel("绝对误差")#,fontproperties=font)
-    # ax1.set_ylim(-2,2)
-    # ax1.set_title('平均速度绝对误差')
+    fig=plt.figure()#figsize=(15,9.375))
+    ax1=fig.add_subplot(2,2,1)
+    ax1.plot(x[:last],speed_y[:last],color='#4285F4',label="真实值",linestyle='-')
+    ax1.plot(x[:last],predictVelocity[:last],color='#DB4437',label= "预测值",linestyle='--',marker='x')
+    ax1.set_xlabel("时间/min")#,fontproperties=font)
+    ax1.set_ylabel("速度")#,fontproperties=font)
+    # ax.set_ylim(-1,1)
+    ax1.set_title('PSO-SVR 预测结果')
+    ax1.legend(loc="best",framealpha=0.5)
 
-    # ax2=fig.add_subplot(2,1,1)
-    # ax2.plot(x[:last],flow_y[:last],color='#F4B400',label="真实值",linestyle='-' )
-    # ax2.plot(x[:last],predictFlow[:last],color='#0F9D58',label= "预测值",linestyle='--',marker='x')
-    # ax2.set_xlabel("时间/min")#,fontproperties=font)
-    # ax2.set_ylabel("流量")#,fontproperties=font)
-    # # ax.set_ylim(-1,1)
-    # ax2.set_title('PSO-SVR 预测结果')
-    #
-    # ax2.legend(loc="best",framealpha=0.5)
-    #
-    # error=flow_y[:last]-predictFlow[:last]
-    # ax1=fig.add_subplot(2,1,2)
-    # ax1.bar(x[:last],speed_y[:last]-predictVelocity[:last])
-    # ax1.set_xlabel("时间/min")#,fontproperties=font)
-    # ax1.set_ylabel("绝对误差")#,fontproperties=font)
-    # ax1.set_ylim(-2,2)
-    # ax1.set_title('交通流量绝对误差')
-    #
-    #
-    # # fig.suptitle('\nSVR-PSO预测结果')
-    # plt.tight_layout()
-    # plt.subplots_adjust(left=0.08,hspace =0.5)
-    # plt.show()
+    error=speed_y[:last]-predictVelocity[:last]
+    ax2=fig.add_subplot(2,2,2)
+    ax2.bar(x[:last],speed_y[:last]-predictVelocity[:last])
+    ax2.set_xlabel("时间/min")#,fontproperties=font)
+    ax2.set_ylabel("绝对误差")#,fontproperties=font)
+    ax2.set_ylim(-2,2)
+    ax2.set_title('平均速度绝对误差')
+
+    ax3=fig.add_subplot(2,2,3)
+    ax3.plot(x[:last],flow_y[:last],color='#F4B400',label="真实值",linestyle='-' )
+    ax3.plot(x[:last],predictFlow[:last],color='#0F9D58',label= "预测值",linestyle='--',marker='x')
+    ax3.set_xlabel("时间/min")#,fontproperties=font)
+    ax3.set_ylabel("流量")#,fontproperties=font)
+    # ax.set_ylim(-1,1)
+    ax3.set_title('PSO-SVR 预测结果')
+
+    ax3.legend(loc="best",framealpha=0.5)
+
+    error=flow_y[:last]-predictFlow[:last]
+    ax4=fig.add_subplot(2,2,4)
+    ax4.bar(x[:last],speed_y[:last]-predictVelocity[:last])
+    ax4.set_xlabel("时间/min")#,fontproperties=font)
+    ax4.set_ylabel("绝对误差")#,fontproperties=font)
+    ax4.set_ylim(-2,2)
+    ax4.set_title('交通流量绝对误差')
+
+
+    # fig.suptitle('\nSVR-PSO预测结果')
+    plt.tight_layout()
+    plt.subplots_adjust(left=0.08,hspace =0.5)
+    plt.show()
 
 
 

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Start - Leaflet</title>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+          integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+            integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+</head>
+<body>
+
+
+<div id="map" style="width: 2560px; height: 800px;"></div>
+<script>
+
+    var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        osmAttrib = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+
+    var map = L.map('map').setView([33.565462,-117.828018], 15).addLayer(osm);
+
+    L.marker([33.565462,-117.828018])
+        .addTo(map)
+        .bindPopup('上游')
+        .openPopup();
+
+    L.marker([33.575502,-117.839807])
+        .addTo(map)
+        .bindPopup('下游')
+        .openPopup();
+
+    // var polygon = L.polygon([
+    // [33.565462,-117.828018],
+    // [33.575502,-117.839807],
+    // [33.568306, -117.83247],
+    // [33.572564, -117.837762],
+    // ]).addTo(map);
+
+    var latlngs = [
+        [33.565462,-117.828018],
+        [33.568306, -117.83247],
+        [33.572564, -117.837762],
+        [33.573269, -117.838429],
+        [33.574435, -117.83926],
+        [33.575502,-117.839807],
+
+    ];
+    var polyline = L.polyline(latlngs, {color: '#2063BE',weight:7}).addTo(map);
+    // zoom the map to the polyline
+    map.fitBounds(polyline.getBounds());
+
+    function onMapClick(e) {
+    alert("You clicked the map at " + e.latlng);
+    }
+    map.on('click', onMapClick);
+
+</script>
+
+
+</body>
+</html>
