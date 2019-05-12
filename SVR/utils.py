@@ -122,6 +122,8 @@ def get_LSTM_input(up_fname,down_fname,test_mode=False):
     x = np.asarray(x)
     y = np.asarray(list(chain.from_iterable(zip(y_speed,y_flow,y_occu)))).reshape(-1,3)
 
+    print (x.shape)
+
     if test_mode:
         return time_series_input, time_series_output, scalers
     else:
