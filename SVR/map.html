@@ -54,6 +54,25 @@
     // zoom the map to the polyline
     map.fitBounds(polyline.getBounds());
 
+    var circle = L.circle([33.571083, -117.835944], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 50
+    }).addTo(map)
+    .bindPopup('分叉口1')
+    .openPopup();
+
+    var circle = L.circle([33.566841, -117.830064], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 50
+    }).addTo(map)
+    .bindPopup('分叉口2');
+    // .openPopup();
+
+
     function onMapClick(e) {
     alert("You clicked the map at " + e.latlng);
     }
