@@ -67,7 +67,6 @@ def read_json():
         true_flow = json.load(f)
 
     cut = np.where(time==np.datetime64('2019-04-08T08:15:00'))[0].tolist()[0] + 1
-    print (time[cut])
     # speed = return_dict['speed']
     # flow = return_dict['flow']
 
@@ -76,7 +75,6 @@ def read_json():
     true_speed = np.array(true_speed).reshape(-1,1)
     true_flow = np.array(true_flow).reshape(-1,1)
 
-    print (len(time[cut:]),pred_speed.shape)
 
     return time[cut:], pred_speed, pred_flow, true_speed, true_flow
     # return time,speed[:-1],flow[:-1]
@@ -110,8 +108,8 @@ def dense_membership(x):
     """
     fixed = [1,1.5,2,2.5,3] +-0.5
     """
-    fixed = [1,1.5,2,2.5,3]
-    loose = [ [i-0.5,i+0.5] for i in fixed]
+    fixed = [10,20,30,40,50]
+    loose = [ [i-5,i+5] for i in fixed]
     k = [item for sublist in loose for item in sublist]
     score = []
     score.append(func_left(k[0],k[1],x))
@@ -128,7 +126,7 @@ def saturate_membership(x):
     fixed = [0.25,0.4,0.55,0.7,0.85] +- 0.2
     """
     fixed = [0.25,0.4,0.55,0.7,0.85]
-    loose = [ [i-0.2,i+0.2] for i in fixed]
+    loose = [ [i-0.05,i+0.05] for i in fixed]
     k = [item for sublist in loose for item in sublist]
     score = []
     score.append(func_left(k[0],k[1],x))
@@ -143,8 +141,8 @@ def saturate_membership(x):
 
 def tag_rush_type(time,matrix):
     matrix = np.append(matrix,np.zeros((matrix.shape[0],1)),axis=1)
-    print (time[0],time[-1])
-    print (len(time),matrix.shape[0])
+    # print (time[0],time[-1])
+    # print (len(time),matrix.shape[0])
 
     for i in range(matrix.shape[0]):
         hour = pd.to_datetime(time[i]).hour
@@ -172,11 +170,14 @@ def get_R_matrix(vec):
     return np.asarray(r)
 
 def matrix_with_rush_tag(time,speed,flow):
+
     speed = np.asarray(speed).reshape(-1,1)
     flow = np.asarray(flow).reshape(-1,1)
     matrix = np.append(speed,(flow/speed/12).reshape(-1,1),axis=1)
     matrix = np.append(matrix,(flow/183).reshape(-1,1),axis=1)
+
     matrix = tag_rush_type(time,matrix)
+
     return matrix
 
 
@@ -234,6 +235,8 @@ def congestion_rank(matrix,mor_weight,eve_weight,oth_weight):
             res = oth_weight.dot(R)
             matrix[i][-1] = np.argmax(res)+1
 
+    # print (np.where(matrix[:,-1]==3))
+
     print (
             matrix[np.where(matrix[:,-1]==1)].shape[0],
             matrix[np.where(matrix[:,-1]==2)].shape[0],
@@ -260,6 +263,7 @@ if __name__ == '__main__':
     mor_weight,eve_weight,oth_weight = get_final_weight()
     pred_matrix = matrix_with_rush_tag(time,pred_speed,pred_flow)
     a = congestion_rank(pred_matrix,mor_weight,eve_weight,oth_weight)
+
     true_matrix= matrix_with_rush_tag(time,true_speed,true_flow)
     b = congestion_rank(true_matrix,mor_weight,eve_weight,oth_weight)
 

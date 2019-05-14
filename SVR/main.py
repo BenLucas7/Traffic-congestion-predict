@@ -10,6 +10,9 @@ from sklearn.metrics import mean_absolute_error,r2_score,mean_squared_error
 from matplotlib.text import OffsetFrom
 from matplotlib.offsetbox import AnchoredText
 import matplotlib.patches as patches
+plt.rcParams['font.family'] = ['Microsoft YaHei']
+plt.rcParams['font.size'] = 11
+plt.rcParams['axes.unicode_minus'] = False
 
 def MAPE(true,pred):
     diff = np.abs(np.array(true) - np.array(pred))
@@ -180,15 +183,18 @@ def draw_pred_curve(x_time, y_pred_speed, y_pred_flow, y_true_speed, y_true_flow
 
 def draw_rank(x_time,pred_rank,true_rank,accu):
     fig = plt.figure(figsize=(15,9.375))
-    ax = plt.subplot(111)
+    ax = plt.subplot2grid((2,2),(0,0),colspan=2)
 
-    ax.plot(x_time,pred_rank,color = '#4285F4',label='Predict Rank',marker='.')
-    ax.plot(x_time,true_rank,color = '#DB4437',label='True Rank',marker='o',fillstyle='none')
+    cut = np.where(x_time==np.datetime64('2019-04-09T00:00:00'))[0].tolist()[0]
 
-    ax.set(xlabel='time')
-    ax.set(ylabel='rank')
+
+    ax.plot(x_time[cut:],pred_rank[cut:],color = '#4285F4',label='Predict Rank',marker='.')
+    ax.plot(x_time[cut:],true_rank[cut:],color = '#DB4437',label='True Rank',marker='o',fillstyle='none')
+
+    ax.set(xlabel='时间')
+    ax.set(ylabel='等级')
     ax.set_ylim([0,7])
-    ax.set_title('Traffic congestion rank')
+    ax.set_title('全天交通拥堵等级')
     ax.legend(loc='best',framealpha=0.5)
 
     speed_annotation = 'accuracy: {:.4f}'.format(accu)
@@ -200,6 +206,37 @@ def draw_rank(x_time,pred_rank,true_rank,accu):
     at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
     ax.add_artist(at)
 
+    ax2 = plt.subplot2grid((2,2),(1,0),colspan=1)
+    start = np.where(x_time==np.datetime64('2019-04-09T05:45:00'))[0].tolist()[0]
+    end = np.where(x_time==np.datetime64('2019-04-09T08:15:00'))[0].tolist()[0]+1
+
+    ax2.plot(x_time[start:end],pred_rank[start:end],color = '#4285F4',label='Predict Rank',marker='.')
+    ax2.plot(x_time[start:end],true_rank[start:end],color = '#DB4437',label='True Rank',marker='o',fillstyle='none')
+
+    ax2.set(xlabel='时间')
+    ax2.set(ylabel='等级')
+    ax2.set_ylim([0,7])
+    ax2.set_title('早高峰')
+    ax2.legend(loc='best',framealpha=0.5)
+
+
+    ax3 = plt.subplot2grid((2,2),(1,1),colspan=1)
+    start = np.where(x_time==np.datetime64('2019-04-09T16:45:00'))[0].tolist()[0]
+    end = np.where(x_time==np.datetime64('2019-04-09T19:15:00'))[0].tolist()[0]+1
+
+    my_stick = np.arange(np.datetime64('2019-04-09T16:45:00'), np.datetime64('2019-04-09T19:15:00'), 1200)
+
+    ax3.plot(x_time[start:end],pred_rank[start:end],color = '#4285F4',label='Predict Rank',marker='.')
+    ax3.plot(x_time[start:end],true_rank[start:end],color = '#DB4437',label='True Rank',marker='o',fillstyle='none')
+
+    ax3.set(xlabel='时间')
+    ax3.set(ylabel='等级')
+    ax3.set_ylim([0,7])
+    ax3.set_title('晚高峰')
+    ax3.legend(loc='best',framealpha=0.5)
+
+
+    plt.tight_layout()
     plt.savefig('pic/rank.png', dpi=300)
     plt.show()
 
