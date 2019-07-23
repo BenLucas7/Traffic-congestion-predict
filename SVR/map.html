@@ -10,29 +10,29 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
           integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-            integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+            integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+            crossorigin=""></script>
 </head>
 <body>
 
-
-<div id="map" style="width: 2560px; height: 800px;"></div>
+<div id="map" style="width: 100%; height: 785px;"></div>
 <script>
 
     var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         osmAttrib = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
 
-    var map = L.map('map').setView([33.565462,-117.828018], 15).addLayer(osm);
+    var map = L.map('map').setView([33.565462, -117.828018], 15).addLayer(osm);
 
-    L.marker([33.565462,-117.828018])
+    L.marker([33.565462, -117.828018])
         .addTo(map)
-        .bindPopup('上游')
-        .openPopup();
+        .bindPopup('上游');
+        // .openPopup();
 
-    L.marker([33.575502,-117.839807])
+    L.marker([33.575502, -117.839807])
         .addTo(map)
-        .bindPopup('下游')
-        .openPopup();
+        .bindPopup('下游');
+        // .openPopup();
 
     // var polygon = L.polygon([
     // [33.565462,-117.828018],
@@ -42,15 +42,59 @@
     // ]).addTo(map);
 
     var latlngs = [
-        [33.565462,-117.828018],
+        [33.565462, -117.828018],
         [33.568306, -117.83247],
         [33.572564, -117.837762],
         [33.573269, -117.838429],
         [33.574435, -117.83926],
-        [33.575502,-117.839807],
+        [33.575502, -117.839807],
 
     ];
-    var polyline = L.polyline(latlngs, {color: '#2063BE',weight:7}).addTo(map);
+
+
+    // 假设列表rank是所有的等级 比如 rank=[1,1,1,1,2,3,4,2,1,2,3,1,...] 在 pred_rank.json 文件里
+    // 用一个循环遍历rank 然后更改下面的color即可 我用python代码写一下 然后你改成js
+    // 等级对应颜色字典 colors={1:'#336838',2:'#8BBD63', 3:'#FEE88F', 4:'#FCCA60', 5:'#E04B48', 6:'#A61A2C'}
+
+    // for i in rank:
+    //     color = colors[i] 得到对应的颜色
+    //     var polyline = L.polyline(latlngs, {color: color ,weight:7}).addTo(map);
+    //     sys.pause(1000) 暂停一秒
+
+    var rank = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 4, 4, 5, 6, 6, 5, 5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1];
+    var index = 0;
+    var color=setInterval(function () {
+        var color = '';
+        switch (rank[index]) {
+            case 1:
+                color = '#336838';
+                break;
+            case 2:
+                color = '#8BBD63';
+                break;
+            case 3:
+                color = '#FEE88F';
+                break;
+            case 4:
+                color = '#FCCA60';
+                break;
+            case 5:
+                color = '#E04B48';
+                break;
+            case 6:
+                color = '#A61A2C';
+                break;
+            default:
+                break;
+        }
+        var polyline = L.polyline(latlngs, {color: color, weight: 7}).addTo(map);
+        index++;
+        if(index===rank.length) clearInterval(color);
+
+    }, 20);
+
+
+    var polyline = L.polyline(latlngs, {color: '#2063BE', weight: 7}).addTo(map);
     // zoom the map to the polyline
     map.fitBounds(polyline.getBounds());
 
@@ -60,8 +104,8 @@
         fillOpacity: 0.5,
         radius: 50
     }).addTo(map)
-    .bindPopup('分叉口1')
-    .openPopup();
+        .bindPopup('分叉口1');
+        // .openPopup();
 
     var circle = L.circle([33.566841, -117.830064], {
         color: 'red',
@@ -69,15 +113,16 @@
         fillOpacity: 0.5,
         radius: 50
     }).addTo(map)
-    .bindPopup('分叉口2');
+        .bindPopup('分叉口2');
+
     // .openPopup();
 
 
     function onMapClick(e) {
-    alert("You clicked the map at " + e.latlng);
+        alert("You clicked the map at " + e.latlng);
     }
-    map.on('click', onMapClick);
 
+    map.on('click', onMapClick);
 </script>
 
 
