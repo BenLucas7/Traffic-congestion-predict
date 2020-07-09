@@ -14,10 +14,12 @@ Particle Swarm Optimization on SVR. Here we introduce the arguments first:
 --win            |        int        | indicates the window size in the timeline. e.g. 3 means considering 
                                        the speed and flow data of the previous 3 moments from given time. 
 --n_iterations   |        int        | the iteration number of the whole PSO-SVR training
+
 # PSO
 --inertia_weight |       float       | the inertia_weight of PSO
 --c1             |       float       | the first acceleration constant of PSO
 --c2             |       float       | the second acceleration constant of PSO
+
 # SVR
 --kernel         | 'rbf','linear',...| the kernel of SVR
 --epsilon        |       float       | the epsilon of SVR
