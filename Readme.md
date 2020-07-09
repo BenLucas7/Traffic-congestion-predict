@@ -51,14 +51,18 @@ python3 test.py --type=flow --win=5 --no-scale
 # draw the bar plot of different time window size
 python3 plot.py --type=speed --kind=b
 ```
+![bar](./pic/bar.png)
 ```python
 # draw the training curve plot of the evaluation, i.e. MSE, MAPE
 python3 plot.py --type=speed --win=3 --kind=c --no-scale
 ```
+![curve](./pic/curve.png)
+
 ```python
 # draw the scatter plot of the Paticle Swarm duing training process
 python3 test.py --type=speed --win=3 --kind=s --no-scale
 ```
+![scatter](./pic/scatter.png)
 
 
 
